@@ -40,3 +40,5 @@ int strToNivel(const string &s)
         return 4;
     return 5;
 }
+
+// Function to read the Bloom Taxonomy file and store the data in a 2D array
