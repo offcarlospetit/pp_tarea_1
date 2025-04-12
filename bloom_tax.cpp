@@ -439,3 +439,228 @@ public:
         getline(ss, tipoRelacion, ',');
     }
 };
+//genesis
+class PreguntaTextoIncompleto : public PreguntaBase
+{
+public:
+    string plantilla; // Texto base con espacio vacío
+
+    string tipo() const override { return "Texto Incompleto"; }
+
+    void mostrar() const override
+    {
+        cout << id << ". " << enunciado << " [Texto Incompleto, " << nivelToStr(nivel) << "]\n";
+        cout << "→ Plantilla: " << plantilla << "\n";
+        cout << "→ Palabra clave esperada: " << respuestaCorrecta << "\n";
+    }
+
+    void crearDesdeConsola() override
+    {
+        cout << "ID: ";
+        cin >> id;
+        cin.ignore();
+        cout << "Enunciado: ";
+        getline(cin, enunciado);
+        cout << "Nivel Bloom (0-5): ";
+        cin >> nivel;
+        cout << "Tiempo estimado (min): ";
+        cin >> tiempoEstimado;
+        cin.ignore();
+        cout << "Respuesta Correcta: ";
+        getline(cin, respuestaCorrecta);
+        cout << "Año de uso: ";
+        cin >> anioUso;
+        cin.ignore();
+        cout << "Texto plantilla con espacio a completar (use ___ o ...): ";
+        getline(cin, plantilla);
+    }
+
+    void guardar(ofstream &out) const override
+    {
+        out << id << "," << enunciado << "," << tipo() << "," << nivelToStr(nivel) << ","
+            << tiempoEstimado << "," << respuestaCorrecta << "," << anioUso << ","
+            << plantilla << "\n";
+    }
+
+    void cargar(stringstream &ss) override
+    {
+        string temp;
+        getline(ss, enunciado, ',');
+        getline(ss, temp, ',');
+        nivel = strToNivel(temp);
+        getline(ss, temp, ',');
+        tiempoEstimado = stoi(temp);
+        getline(ss, respuestaCorrecta, ',');
+        getline(ss, temp, ',');
+        anioUso = stoi(temp);
+        getline(ss, plantilla, ',');
+    }
+};
+
+struct ParEmparejamiento
+{
+    int id;
+    string conceptoA;
+    string conceptoB;
+};
+class PreguntaEmparejamiento : public PreguntaBase
+{
+    ParEmparejamiento pares[10];
+    int cantidadPares;
+
+    string tipo() const override { return "Emparejamiento"; }
+
+    void mostrar() const override
+    {
+        cout << id << ". " << enunciado << " [Emparejamiento, " << nivelToStr(nivel) << "]\n";
+
+        cout << "\nLista A:\n";
+        for (int i = 0; i < cantidadPares; ++i)
+        {
+            cout << i + 1 << ") " << pares[i].conceptoA << "\n";
+        }
+
+        cout << "\nLista B (desordenada):\n";
+        // Copia para desordenar sin afectar el orden lógico
+        string desordenada[10];
+        for (int i = 0; i < cantidadPares; ++i)
+            desordenada[i] = pares[i].conceptoB;
+
+        for (int i = 0; i < cantidadPares; ++i)
+        {
+            int j = (i * 3 + 2) % cantidadPares;
+            string tmp = desordenada[i];
+            desordenada[i] = desordenada[j];
+            desordenada[j] = tmp;
+        }
+
+        for (int i = 0; i < cantidadPares; ++i)
+        {
+            cout << static_cast<char>('A' + i) << ") " << desordenada[i] << "\n";
+        }
+    }
+
+    void crearDesdeConsola() override
+    {
+        cout << "ID: ";
+        cin >> id;
+        cin.ignore();
+        cout << "Enunciado: ";
+        getline(cin, enunciado);
+        cout << "Nivel Bloom (0-5): ";
+        cin >> nivel;
+        cout << "Tiempo estimado (min): ";
+        cin >> tiempoEstimado;
+        cin.ignore();
+        cout << "Año de uso: ";
+        cin >> anioUso;
+        cin.ignore();
+        cout << "Cantidad de pares (máximo 10): ";
+        cin >> cantidadPares;
+        cin.ignore();
+
+        for (int i = 0; i < cantidadPares; ++i)
+        {
+            pares[i].id = i;
+            cout << "Concepto A" << i + 1 << ": ";
+            getline(cin, pares[i].conceptoA);
+            cout << "Concepto B" << i + 1 << ": ";
+            getline(cin, pares[i].conceptoB);
+        }
+
+        respuestaCorrecta = "Pares definidos";
+    }
+
+    void guardar(ofstream &out) const override
+    {
+        out << id << "," << enunciado << "," << tipo() << "," << nivelToStr(nivel) << ","
+            << tiempoEstimado << "," << respuestaCorrecta << "," << anioUso << ","
+            << cantidadPares;
+        for (int i = 0; i < cantidadPares; ++i)
+        {
+            out << "," << pares[i].conceptoA << "," << pares[i].conceptoB;
+        }
+        out << "\n";
+    }
+
+    void cargar(stringstream &ss) override
+    {
+        string temp;
+        getline(ss, enunciado, ',');
+        getline(ss, temp, ',');
+        nivel = strToNivel(temp);
+        getline(ss, temp, ',');
+        tiempoEstimado = stoi(temp);
+        getline(ss, respuestaCorrecta, ',');
+        getline(ss, temp, ',');
+        anioUso = stoi(temp);
+        getline(ss, temp, ',');
+        cantidadPares = stoi(temp);
+
+        for (int i = 0; i < cantidadPares; ++i)
+        {
+            pares[i].id = i;
+            getline(ss, pares[i].conceptoA, ',');
+            getline(ss, pares[i].conceptoB, ',');
+        }
+    }
+
+    int evaluar() const
+    {
+        cout << "\n--- Evaluación de pregunta de emparejamiento ---\n";
+        string opcionesDesordenadas[10];
+        int indicesDesordenados[10];
+
+        // Copiar valores
+        for (int i = 0; i < cantidadPares; ++i)
+        {
+            opcionesDesordenadas[i] = pares[i].conceptoB;
+            indicesDesordenados[i] = i;
+        }
+
+        // Mezclar los índices (sencilla permutación determinista)
+        for (int i = 0; i < cantidadPares; ++i)
+        {
+            int j = (i * 3 + 1) % cantidadPares;
+            swap(opcionesDesordenadas[i], opcionesDesordenadas[j]);
+            swap(indicesDesordenados[i], indicesDesordenados[j]);
+        }
+
+        // Mostrar columnas
+        cout << "\nConceptos A:\n";
+        for (int i = 0; i < cantidadPares; ++i)
+        {
+            cout << i + 1 << ") " << pares[i].conceptoA << "\n";
+        }
+
+        cout << "\nConceptos B:\n";
+        for (int i = 0; i < cantidadPares; ++i)
+        {
+            cout << static_cast<char>('A' + i) << ") " << opcionesDesordenadas[i] << "\n";
+        }
+
+        // Entrada del usuario
+        int correctas = 0;
+        for (int i = 0; i < cantidadPares; ++i)
+        {
+            cout << "\n¿Con qué letra emparejas el concepto A" << i + 1 << "? ";
+            char letra;
+            cin >> letra;
+            int seleccion = letra - 'A';
+
+            int realIndexB = indicesDesordenados[seleccion];
+            if (pares[i].conceptoB == pares[realIndexB].conceptoB)
+            {
+                cout << "✅ Correcto.\n";
+                correctas++;
+            }
+            else
+            {
+                cout << "❌ Incorrecto. Correcto era: " << pares[i].conceptoB << "\n";
+            }
+        }
+
+        cout << "\n✔️ Obtuviste " << correctas << " de " << cantidadPares << " emparejamientos correctos.\n";
+        return correctas;
+    }
+};
