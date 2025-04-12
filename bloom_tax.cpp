@@ -1,3 +1,4 @@
+// evaluacion_bloom_refactor.cpp
 #include <iostream>
 #include <fstream>
 #include <sstream>
@@ -40,3 +41,24 @@ int strToNivel(const string &s)
         return 4;
     return 5;
 }
+
+class PreguntaBase
+{
+public:
+    int id;
+    string enunciado;
+    int nivel;
+    int tiempoEstimado;
+    string respuestaCorrecta;
+    int anioUso;
+
+    virtual void mostrar() const = 0;
+    virtual string tipo() const = 0;
+
+    // Nueva interfaz polimórfica
+    virtual void crearDesdeConsola() = 0;
+    virtual void guardar(ofstream &out) const = 0;
+    virtual void cargar(stringstream &ss) = 0;
+
+    virtual ~PreguntaBase() {}
+};
