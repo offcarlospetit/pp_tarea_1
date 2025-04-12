@@ -1,0 +1,41 @@
+name: 🔐 Bloquear y Revertir Push no Autorizado a Main
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  check-author-and-revert:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Obtener datos del commit
+        id: vars
+        run: |
+          echo "actor=$GITHUB_ACTOR" >> $GITHUB_OUTPUT
+          echo "sha=$(git rev-parse HEAD)" >> $GITHUB_OUTPUT
+
+      - name: Verificar si el autor es autorizado
+        if: ${{ steps.vars.outputs.actor != 'offcarlospetit' }}
+        run: |
+          echo "⛔ Push no autorizado por $GITHUB_ACTOR. Revirtiendo..."
+
+      - name: Clonar repositorio
+        if: ${{ steps.vars.outputs.actor != 'offcarlospetit' }}
+        uses: actions/checkout@v4
+        with:
+          ref: main
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Revertir commit
+        if: ${{ steps.vars.outputs.actor != 'offcarlospetit' }}
+        run: |
+          git config user.name "GitHub Action"
+          git config user.email "actions@github.com"
+          git revert --no-edit ${{ steps.vars.outputs.sha }}
+
+      - name: Hacer push del revert
+        if: ${{ steps.vars.outputs.actor != 'offcarlospetit' }}
+        run: |
+          git push origin main
