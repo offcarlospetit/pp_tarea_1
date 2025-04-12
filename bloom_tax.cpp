@@ -188,3 +188,162 @@ public:
         getline(ss, tipoEsperado, ',');
     }
 };
+
+class PreguntaMultiple : public PreguntaBase
+{
+public:
+    string opciones[10]; // máximo 10 opciones
+    int cantidadOpciones;
+    int indiceCorrecto;
+
+    string tipo() const override { return "Opcion Multiple"; }
+
+    void mostrar() const override
+    {
+        cout << id << ". " << enunciado << " [Opción Múltiple, " << nivelToStr(nivel) << "]\n";
+        for (int i = 0; i < cantidadOpciones; ++i)
+        {
+            cout << "  " << static_cast<char>('A' + i) << ") " << opciones[i];
+            if (i == indiceCorrecto)
+                cout << "  ✅";
+            cout << "\n";
+        }
+    }
+
+    void crearDesdeConsola() override
+    {
+        cout << "ID: ";
+        cin >> id;
+        cin.ignore();
+        cout << "Enunciado: ";
+        getline(cin, enunciado);
+        cout << "Nivel Bloom (0-5): ";
+        cin >> nivel;
+        cout << "Tiempo estimado (min): ";
+        cin >> tiempoEstimado;
+        cin.ignore();
+        cout << "Año de uso: ";
+        cin >> anioUso;
+        cin.ignore();
+
+        cout << "Cantidad de opciones (máx 10): ";
+        cin >> cantidadOpciones;
+        cin.ignore();
+
+        for (int i = 0; i < cantidadOpciones; ++i)
+        {
+            cout << "Opción " << static_cast<char>('A' + i) << ": ";
+            getline(cin, opciones[i]);
+        }
+
+        cout << "Índice de la opción correcta (0 a " << cantidadOpciones - 1 << "): ";
+        cin >> indiceCorrecto;
+        cin.ignore();
+
+        if (indiceCorrecto >= 0 && indiceCorrecto < cantidadOpciones)
+            respuestaCorrecta = opciones[indiceCorrecto];
+    }
+
+    void guardar(ofstream &out) const override
+    {
+        out << id << "," << enunciado << "," << tipo() << "," << nivelToStr(nivel) << ","
+            << tiempoEstimado << "," << respuestaCorrecta << "," << anioUso << ","
+            << cantidadOpciones << "," << indiceCorrecto;
+
+        for (int i = 0; i < cantidadOpciones; ++i)
+        {
+            out << "," << opciones[i];
+        }
+        out << "\n";
+    }
+
+    void cargar(stringstream &ss) override
+    {
+        string temp;
+        getline(ss, enunciado, ',');
+        getline(ss, temp, ',');
+        nivel = strToNivel(temp);
+        getline(ss, temp, ',');
+        tiempoEstimado = stoi(temp);
+        getline(ss, respuestaCorrecta, ',');
+        getline(ss, temp, ',');
+        anioUso = stoi(temp);
+        getline(ss, temp, ',');
+        cantidadOpciones = stoi(temp);
+        getline(ss, temp, ',');
+        indiceCorrecto = stoi(temp);
+
+        for (int i = 0; i < cantidadOpciones; ++i)
+        {
+            getline(ss, opciones[i], ',');
+        }
+    }
+};
+
+class PreguntaVF : public PreguntaBase
+{
+public:
+    bool esVerdadero;
+    string justificacion;
+
+    string tipo() const override { return "Verdadero/Falso"; }
+
+    void mostrar() const override
+    {
+        cout << id << ". " << enunciado << " [Verdadero/Falso, " << nivelToStr(nivel) << "]\n";
+        cout << "→ Valor: " << (esVerdadero ? "Verdadero" : "Falso") << "\n";
+        cout << "→ Justificación: " << justificacion << "\n";
+    }
+
+    void crearDesdeConsola() override
+    {
+        cout << "ID: ";
+        cin >> id;
+        cin.ignore();
+        cout << "Enunciado: ";
+        getline(cin, enunciado);
+        cout << "Nivel Bloom (0-5): ";
+        cin >> nivel;
+        cout << "Tiempo estimado (min): ";
+        cin >> tiempoEstimado;
+        cin.ignore();
+        cout << "Año de uso: ";
+        cin >> anioUso;
+        cin.ignore();
+
+        int valor;
+        cout << "¿Es Verdadero (1) o Falso (0)? ";
+        cin >> valor;
+        cin.ignore();
+        esVerdadero = (valor == 1);
+        respuestaCorrecta = esVerdadero ? "Verdadero" : "Falso";
+
+        cout << "Justificación de la respuesta: ";
+        getline(cin, justificacion);
+    }
+
+    void guardar(ofstream &out) const override
+    {
+        out << id << "," << enunciado << "," << tipo() << "," << nivelToStr(nivel) << ","
+            << tiempoEstimado << "," << respuestaCorrecta << "," << anioUso << ","
+            << (esVerdadero ? "1" : "0") << "," << justificacion << "\n";
+    }
+
+    void cargar(stringstream &ss) override
+    {
+        string temp;
+        getline(ss, enunciado, ',');
+        getline(ss, temp, ',');
+        nivel = strToNivel(temp);
+        getline(ss, temp, ',');
+        tiempoEstimado = stoi(temp);
+        getline(ss, respuestaCorrecta, ',');
+        getline(ss, temp, ',');
+        anioUso = stoi(temp);
+        getline(ss, temp, ',');
+        esVerdadero = (temp == "1");
+        getline(ss, justificacion, ',');
+    }
+};
+
+
