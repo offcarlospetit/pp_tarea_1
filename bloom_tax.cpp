@@ -6,6 +6,10 @@
 
 using namespace std;
 
+#define DEBUG_STOI(var, name)                          \
+    cout << "Leyendo " << name << ": " << var << endl; \
+    stoi(var);
+
 string nivelToStr(int nivel)
 {
     switch (nivel)
@@ -120,9 +124,12 @@ public:
 
     void guardar(ofstream &out) const override
     {
-        out << id << "," << enunciado << "," << tipo() << "," << nivelToStr(nivel) << ","
-            << tiempoEstimado << "," << respuestaCorrecta << "," << anioUso << ","
-            << cantidadOpciones << "," << indiceCorrecto;
+        out << nivelToStr(nivel) << ","
+            << tiempoEstimado << ","
+            << respuestaCorrecta << ","
+            << anioUso << ","
+            << cantidadOpciones << ","
+            << indiceCorrecto;
 
         for (int i = 0; i < cantidadOpciones; ++i)
         {
@@ -134,22 +141,38 @@ public:
     void cargar(stringstream &ss) override
     {
         string temp;
-        getline(ss, enunciado, ',');
-        getline(ss, temp, ',');
+
+        if (!getline(ss, temp, ','))
+            return;
         nivel = strToNivel(temp);
-        getline(ss, temp, ',');
+
+        if (!getline(ss, temp, ','))
+            return;
+        DEBUG_STOI(temp, "tiempoEstimado");
         tiempoEstimado = stoi(temp);
-        getline(ss, respuestaCorrecta, ',');
-        getline(ss, temp, ',');
+
+        if (!getline(ss, respuestaCorrecta, ','))
+            return;
+
+        if (!getline(ss, temp, ','))
+            return;
+        DEBUG_STOI(temp, "anioUso");
         anioUso = stoi(temp);
-        getline(ss, temp, ',');
+
+        if (!getline(ss, temp, ','))
+            return;
+        DEBUG_STOI(temp, "cantidadOpciones");
         cantidadOpciones = stoi(temp);
-        getline(ss, temp, ',');
+
+        if (!getline(ss, temp, ','))
+            return;
+        DEBUG_STOI(temp, "indiceCorrecto");
         indiceCorrecto = stoi(temp);
 
         for (int i = 0; i < cantidadOpciones; ++i)
         {
-            getline(ss, opciones[i], ',');
+            if (!getline(ss, opciones[i], ','))
+                opciones[i] = "";
         }
     }
 };
@@ -198,25 +221,41 @@ public:
 
     void guardar(ofstream &out) const override
     {
-        out << id << "," << enunciado << "," << tipo() << "," << nivelToStr(nivel) << ","
-            << tiempoEstimado << "," << respuestaCorrecta << "," << anioUso << ","
-            << (esVerdadero ? "1" : "0") << "," << justificacion << "\n";
+        out << nivelToStr(nivel) << ","
+            << tiempoEstimado << ","
+            << respuestaCorrecta << ","
+            << anioUso << ","
+            << (esVerdadero ? "1" : "0") << ","
+            << justificacion << "\n";
     }
 
     void cargar(stringstream &ss) override
     {
         string temp;
-        getline(ss, enunciado, ',');
-        getline(ss, temp, ',');
+
+        if (!getline(ss, temp, ','))
+            return;
         nivel = strToNivel(temp);
-        getline(ss, temp, ',');
+
+        if (!getline(ss, temp, ','))
+            return;
+        DEBUG_STOI(temp, "tiempoEstimado");
         tiempoEstimado = stoi(temp);
-        getline(ss, respuestaCorrecta, ',');
-        getline(ss, temp, ',');
+
+        if (!getline(ss, respuestaCorrecta, ','))
+            return;
+
+        if (!getline(ss, temp, ','))
+            return;
+        DEBUG_STOI(temp, "anioUso");
         anioUso = stoi(temp);
-        getline(ss, temp, ',');
+
+        if (!getline(ss, temp, ','))
+            return;
         esVerdadero = (temp == "1");
-        getline(ss, justificacion, ',');
+
+        if (!getline(ss, justificacion, ','))
+            return;
     }
 };
 
@@ -266,25 +305,44 @@ public:
 
     void guardar(ofstream &out) const override
     {
-        out << id << "," << enunciado << "," << tipo() << "," << nivelToStr(nivel) << ","
-            << tiempoEstimado << "," << respuestaCorrecta << "," << anioUso << ","
-            << contexto << "," << criteriosEvaluacion << "," << extensionMinima << "\n";
+        out << nivelToStr(nivel) << ","
+            << tiempoEstimado << ","
+            << respuestaCorrecta << ","
+            << anioUso << ","
+            << contexto << ","
+            << criteriosEvaluacion << ","
+            << extensionMinima << "\n";
     }
 
     void cargar(stringstream &ss) override
     {
         string temp;
-        getline(ss, enunciado, ',');
-        getline(ss, temp, ',');
+
+        if (!getline(ss, temp, ','))
+            return;
         nivel = strToNivel(temp);
-        getline(ss, temp, ',');
+
+        if (!getline(ss, temp, ','))
+            return;
+        DEBUG_STOI(temp, "tiempoEstimado");
         tiempoEstimado = stoi(temp);
-        getline(ss, respuestaCorrecta, ',');
-        getline(ss, temp, ',');
+
+        if (!getline(ss, respuestaCorrecta, ','))
+            return;
+
+        if (!getline(ss, temp, ','))
+            return;
+        DEBUG_STOI(temp, "anioUso");
         anioUso = stoi(temp);
-        getline(ss, contexto, ',');
-        getline(ss, criteriosEvaluacion, ',');
-        getline(ss, temp, ',');
+
+        if (!getline(ss, contexto, ','))
+            return;
+        if (!getline(ss, criteriosEvaluacion, ','))
+            return;
+
+        if (!getline(ss, temp, ','))
+            return;
+        DEBUG_STOI(temp, "extensionMinima");
         extensionMinima = stoi(temp);
     }
 };
@@ -326,23 +384,37 @@ public:
 
     void guardar(ofstream &out) const override
     {
-        out << id << "," << enunciado << "," << tipo() << "," << nivelToStr(nivel) << ","
-            << tiempoEstimado << "," << respuestaCorrecta << "," << anioUso << ","
+        out << nivelToStr(nivel) << ","
+            << tiempoEstimado << ","
+            << respuestaCorrecta << ","
+            << anioUso << ","
             << tipoEsperado << "\n";
     }
 
     void cargar(stringstream &ss) override
     {
         string temp;
-        getline(ss, enunciado, ',');
-        getline(ss, temp, ',');
+
+        if (!getline(ss, temp, ','))
+            return;
+        DEBUG_STOI(temp, "nivel");
         nivel = strToNivel(temp);
-        getline(ss, temp, ',');
+
+        if (!getline(ss, temp, ','))
+            return;
+        DEBUG_STOI(temp, "tiempoEstimado");
         tiempoEstimado = stoi(temp);
-        getline(ss, respuestaCorrecta, ',');
-        getline(ss, temp, ',');
+
+        if (!getline(ss, respuestaCorrecta, ','))
+            return;
+
+        if (!getline(ss, temp, ','))
+            return;
+        DEBUG_STOI(temp, "anioUso");
         anioUso = stoi(temp);
-        getline(ss, tipoEsperado, ',');
+
+        if (!getline(ss, tipoEsperado, ','))
+            return;
     }
 };
 
@@ -383,23 +455,36 @@ public:
 
     void guardar(ofstream &out) const override
     {
-        out << id << "," << enunciado << "," << tipo() << "," << nivelToStr(nivel) << ","
-            << tiempoEstimado << "," << respuestaCorrecta << "," << anioUso << ","
+        out << nivelToStr(nivel) << ","
+            << tiempoEstimado << ","
+            << respuestaCorrecta << ","
+            << anioUso << ","
             << plantilla << "\n";
     }
 
     void cargar(stringstream &ss) override
     {
         string temp;
-        getline(ss, enunciado, ',');
-        getline(ss, temp, ',');
+        if (!getline(ss, temp, ','))
+            return;
+        DEBUG_STOI(temp, "nivel");
         nivel = strToNivel(temp);
-        getline(ss, temp, ',');
+
+        if (!getline(ss, temp, ','))
+            return;
+        DEBUG_STOI(temp, "tiempoEstimado");
         tiempoEstimado = stoi(temp);
-        getline(ss, respuestaCorrecta, ',');
-        getline(ss, temp, ',');
+
+        if (!getline(ss, respuestaCorrecta, ','))
+            return;
+
+        if (!getline(ss, temp, ','))
+            return;
+        DEBUG_STOI(temp, "anioUso");
         anioUso = stoi(temp);
-        getline(ss, plantilla, ',');
+
+        if (!getline(ss, plantilla, ','))
+            return;
     }
 };
 
@@ -480,35 +565,53 @@ class PreguntaEmparejamiento : public PreguntaBase
 
     void guardar(ofstream &out) const override
     {
-        out << id << "," << enunciado << "," << tipo() << "," << nivelToStr(nivel) << ","
-            << tiempoEstimado << "," << respuestaCorrecta << "," << anioUso << ","
+        out << nivelToStr(nivel) << ","
+            << tiempoEstimado << ","
+            << respuestaCorrecta << ","
+            << anioUso << ","
             << cantidadPares;
+
         for (int i = 0; i < cantidadPares; ++i)
         {
             out << "," << pares[i].conceptoA << "," << pares[i].conceptoB;
         }
+
         out << "\n";
     }
 
     void cargar(stringstream &ss) override
     {
         string temp;
-        getline(ss, enunciado, ',');
-        getline(ss, temp, ',');
+        if (!getline(ss, temp, ','))
+            return;
+        DEBUG_STOI(temp, "nivel");
         nivel = strToNivel(temp);
-        getline(ss, temp, ',');
+
+        if (!getline(ss, temp, ','))
+            return;
+        DEBUG_STOI(temp, "tiempoEstimado");
         tiempoEstimado = stoi(temp);
-        getline(ss, respuestaCorrecta, ',');
-        getline(ss, temp, ',');
+
+        if (!getline(ss, respuestaCorrecta, ','))
+            return;
+
+        if (!getline(ss, temp, ','))
+            return;
+        DEBUG_STOI(temp, "anioUso");
         anioUso = stoi(temp);
-        getline(ss, temp, ',');
+
+        if (!getline(ss, temp, ','))
+            return;
+        DEBUG_STOI(temp, "cantidadPares");
         cantidadPares = stoi(temp);
 
         for (int i = 0; i < cantidadPares; ++i)
         {
             pares[i].id = i;
-            getline(ss, pares[i].conceptoA, ',');
-            getline(ss, pares[i].conceptoB, ',');
+            if (!getline(ss, pares[i].conceptoA, ','))
+                return;
+            if (!getline(ss, pares[i].conceptoB, ','))
+                return;
         }
     }
 
@@ -627,28 +730,48 @@ public:
 
     void guardar(ofstream &out) const override
     {
-        out << id << "," << enunciado << "," << tipo() << "," << nivelToStr(nivel) << ","
-            << tiempoEstimado << "," << respuestaCorrecta << "," << anioUso << ","
-            << parReferenciaA << "," << parReferenciaB << "," << parIncompletoA << ","
-            << parEsperadoB << "," << tipoRelacion << "\n";
+        out << nivelToStr(nivel) << ","
+            << tiempoEstimado << ","
+            << respuestaCorrecta << ","
+            << anioUso << ","
+            << parReferenciaA << ","
+            << parReferenciaB << ","
+            << parIncompletoA << ","
+            << parEsperadoB << ","
+            << tipoRelacion << "\n";
     }
 
     void cargar(stringstream &ss) override
     {
         string temp;
-        getline(ss, enunciado, ',');
-        getline(ss, temp, ',');
+        if (!getline(ss, temp, ','))
+            return;
+        DEBUG_STOI(temp, "nivel");
         nivel = strToNivel(temp);
-        getline(ss, temp, ',');
+
+        if (!getline(ss, temp, ','))
+            return;
+        DEBUG_STOI(temp, "tiempoEstimado");
         tiempoEstimado = stoi(temp);
-        getline(ss, respuestaCorrecta, ',');
-        getline(ss, temp, ',');
+
+        if (!getline(ss, respuestaCorrecta, ','))
+            return;
+
+        if (!getline(ss, temp, ','))
+            return;
+        DEBUG_STOI(temp, "anioUso");
         anioUso = stoi(temp);
-        getline(ss, parReferenciaA, ',');
-        getline(ss, parReferenciaB, ',');
-        getline(ss, parIncompletoA, ',');
-        getline(ss, parEsperadoB, ',');
-        getline(ss, tipoRelacion, ',');
+
+        if (!getline(ss, parReferenciaA, ','))
+            return;
+        if (!getline(ss, parReferenciaB, ','))
+            return;
+        if (!getline(ss, parIncompletoA, ','))
+            return;
+        if (!getline(ss, parEsperadoB, ','))
+            return;
+        if (!getline(ss, tipoRelacion, ','))
+            return;
     }
 };
 
@@ -698,27 +821,71 @@ public:
 
     void guardar(ofstream &out) const override
     {
-        out << id << "," << enunciado << "," << tipo() << "," << nivelToStr(nivel) << ","
-            << tiempoEstimado << "," << respuestaCorrecta << "," << anioUso << ","
-            << tipoGrafico << "," << descripcionRecurso << "," << preguntaRelacionada << "\n";
+        out << nivelToStr(nivel) << ","
+            << tiempoEstimado << ","
+            << respuestaCorrecta << ","
+            << anioUso << ","
+            << tipoGrafico << ","
+            << descripcionRecurso << ","
+            << preguntaRelacionada << "\n";
     }
 
     void cargar(stringstream &ss) override
     {
         string temp;
-        getline(ss, enunciado, ',');
-        getline(ss, temp, ',');
+
+        if (!getline(ss, temp, ','))
+            return;
+        DEBUG_STOI(temp, "nivel");
         nivel = strToNivel(temp);
-        getline(ss, temp, ',');
+
+        if (!getline(ss, temp, ','))
+            return;
+        DEBUG_STOI(temp, "tiempoEstimado");
         tiempoEstimado = stoi(temp);
-        getline(ss, respuestaCorrecta, ',');
-        getline(ss, temp, ',');
+
+        if (!getline(ss, respuestaCorrecta, ','))
+            return;
+
+        if (!getline(ss, temp, ','))
+            return;
+        DEBUG_STOI(temp, "anioUso");
         anioUso = stoi(temp);
-        getline(ss, tipoGrafico, ',');
-        getline(ss, descripcionRecurso, ',');
-        getline(ss, preguntaRelacionada, ',');
+
+        if (!getline(ss, tipoGrafico, ','))
+            return;
+        if (!getline(ss, descripcionRecurso, ','))
+            return;
+        if (!getline(ss, preguntaRelacionada, ','))
+            return;
     }
 };
+
+// Helper function to dynamically create a PreguntaBase by type
+// Helper function to dynamically create a PreguntaBase by type
+PreguntaBase *crearPreguntaDesdeTipo(const string &tipoStr)
+{
+    if (tipoStr == "Opcion Multiple")
+        return new PreguntaMultiple();
+    if (tipoStr == "Verdadero/Falso")
+        return new PreguntaVF();
+    if (tipoStr == "Ensayo")
+        return new PreguntaEnsayo();
+    if (tipoStr == "Respuesta Corta")
+        return new PreguntaCorta();
+    if (tipoStr == "Texto Incompleto")
+        return new PreguntaTextoIncompleto();
+    if (tipoStr == "Emparejamiento")
+        return new PreguntaEmparejamiento();
+    if (tipoStr == "Analogías")
+        return new PreguntaAnalogias();
+    if (tipoStr == "Grafico")
+        return new PreguntaGrafico();
+    return nullptr;
+}
+
+// El resto de la implementación de las clases PreguntaBase y sus derivados deben actualizar sus métodos guardar() y cargar()
+// para que trabajen en conjunto con este formato, separando los campos comunes y específicos.
 
 class GestorPreguntas
 {
@@ -741,6 +908,9 @@ public:
         ofstream file(archivo);
         for (int i = 0; i < cantidad; ++i)
         {
+            file << banco[i]->id << ","
+                 << banco[i]->enunciado << ","
+                 << banco[i]->tipo() << ",";
             banco[i]->guardar(file);
         }
     }
@@ -752,39 +922,30 @@ public:
         while (getline(file, linea) && cantidad < MAX)
         {
             stringstream ss(linea);
-            string temp, tipoStr;
+            string idStr, enunciadoTmp, tipoStr;
 
-            getline(ss, temp, ','); // ID
-            int id = stoi(temp);
-            getline(ss, temp, ','); // enunciado (lo volveremos a leer luego)
-            getline(ss, tipoStr, ',');
+            if (!getline(ss, idStr, ','))
+                continue;
+            if (!getline(ss, enunciadoTmp, ','))
+                continue;
+            if (!getline(ss, tipoStr, ','))
+                continue;
 
-            PreguntaBase *p = nullptr;
-            if (tipoStr == "Opcion Multiple")
-                p = new PreguntaMultiple();
-            else if (tipoStr == "Verdadero/Falso")
-                p = new PreguntaVF();
-            else if (tipoStr == "Ensayo")
-                p = new PreguntaEnsayo();
-            else if (tipoStr == "Respuesta Corta")
-                p = new PreguntaCorta();
-            else if (tipoStr == "Texto Incompleto")
-                p = new PreguntaTextoIncompleto();
-            else if (tipoStr == "Emparejamiento")
-                p = new PreguntaEmparejamiento();
-            else if (tipoStr == "Analogías")
-                p = new PreguntaAnalogias();
-            else if (tipoStr == "Grafico")
-                p = new PreguntaGrafico();
-
+            PreguntaBase *p = crearPreguntaDesdeTipo(tipoStr);
             if (p)
             {
-                ss.clear();
-                ss.str(linea);
-                getline(ss, temp, ',');
-                p->id = stoi(temp);
-                p->cargar(ss);
-                banco[cantidad++] = p;
+                try
+                {
+                    p->id = stoi(idStr);
+                    p->enunciado = enunciadoTmp;
+                    p->cargar(ss);
+                    banco[cantidad++] = p;
+                }
+                catch (exception &e)
+                {
+                    cout << "Error al cargar pregunta: " << e.what() << endl;
+                    delete p;
+                }
             }
         }
     }
@@ -806,14 +967,14 @@ public:
         }
 
         cout << "Tipo de pregunta:\n"
-             << "1. Opción Múltiple\n"
+             << "1. Opcion Multiple\n"
              << "2. Verdadero/Falso\n"
              << "3. Ensayo\n"
              << "4. Respuesta Corta\n"
              << "5. Texto Incompleto\n"
              << "6. Emparejamiento\n"
              << "7. Analogías\n"
-             << "8. Gráfico\n> ";
+             << "8. Grafico\n> ";
         int tipo;
         cin >> tipo;
         cin.ignore();
