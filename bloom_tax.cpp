@@ -3,6 +3,9 @@
 #include <fstream>
 #include <sstream>
 #include <string>
+// Para verificar que las opciones sean numeros y dentro de los rangos permitidos (Benjamin)
+#include <limits>
+
 
 using namespace std;
 
@@ -44,6 +47,24 @@ int strToNivel(const string &s)
     if (s == "Evaluar")
         return 4;
     return 5;
+}
+
+// Verifica que las opciones sean válidas y devuelve el valor ingresado. (Benjamin)
+int leerEnteroSeguro(const string& mensaje, int min = 0, int max = 100) {
+    int valor;
+    while (true) {
+        cout << mensaje;
+        if (cin >> valor) {
+            if (valor >= min && valor <= max)
+                return valor;
+            else
+                cout << "⚠️ Valor fuera del rango permitido (" << min << "-" << max << "). Intenta de nuevo.\n";
+        } else {
+            cout << "❌ Entrada inválida. Por favor ingresa un número.\n";
+            cin.clear(); // Limpia el error
+        }
+        cin.ignore(numeric_limits<streamsize>::max(), '\n'); // Descarta el resto de la línea
+    }
 }
 
 class PreguntaBase
@@ -90,32 +111,36 @@ public:
 
     void crearDesdeConsola() override
     {
-        cout << "ID: ";
-        cin >> id;
+        cout << "Ingrese el ID: "; // Para que sea mas claro que se ingresa el ID. (Benjamin)
+        //cin >> id;
+        id = leerEnteroSeguro("> ", 0, 1000); // Lo desmarque mientras veia si funcionaba el leerEnteroSeguro. (Benjamin).
         cin.ignore();
         cout << "Enunciado: ";
         getline(cin, enunciado);
-        cout << "Nivel Bloom (0-5): ";
-        cin >> nivel;
+        cout << "Nivel Bloom (0-5): \n> 0. Recordar\n> 1. Entender\n> 2. Aplicar\n> 3. Analizar\n> 4. Evaluar\n> 5. Crear\n "; // Para mas claridad sobre los niveles. (Benjamin)
+        // cin >> nivel; // Desmarque mientras veia si funcionaba el leerEnteroSeguro. (Benjamin).
+        nivel = leerEnteroSeguro("> ", 0, 5);        
         cout << "Tiempo estimado (min): ";
-        cin >> tiempoEstimado;
+        // cin >> tiempoEstimado; // Desmarque mientras veia si funcionaba el leerEnteroSeguro. (Benjamin).
+        tiempoEstimado = leerEnteroSeguro("> ", 0, 100);
         cin.ignore();
-        cout << "Año de uso: ";
-        cin >> anioUso;
+        cout << "Año de uso (1900 - 2030): ";
+        // cin >> anioUso; // desmarque mientras veia si funcionaba el leerEnteroSeguro. (Benjamin).
+        anioUso = leerEnteroSeguro("> ", 1900, 2030);
         cin.ignore();
-
         cout << "Cantidad de opciones (máx 10): ";
-        cin >> cantidadOpciones;
+        //cin >> cantidadOpciones; // desmarque mientras veia si funcionaba el leerEnteroSeguro. (Benjamin).
+        cantidadOpciones = leerEnteroSeguro("> ", 0, 10);
         cin.ignore();
-
         for (int i = 0; i < cantidadOpciones; ++i)
         {
             cout << "Opción " << static_cast<char>('A' + i) << ": ";
             getline(cin, opciones[i]);
         }
 
-        cout << "Índice de la opción correcta (0 a " << cantidadOpciones - 1 << "): ";
-        cin >> indiceCorrecto;
+        cout << "Índice de la opción correcta (alternativa 1 a " << cantidadOpciones << "): ";
+        // cin >> indiceCorrecto; // desmarque mientras veia si funcionaba el leerEnteroSeguro. (Benjamin).
+        indiceCorrecto = leerEnteroSeguro("> ", 1, cantidadOpciones) - 1;
         cin.ignore();
 
         if (indiceCorrecto >= 0 && indiceCorrecto < cantidadOpciones)
@@ -194,23 +219,28 @@ public:
 
     void crearDesdeConsola() override
     {
-        cout << "ID: ";
-        cin >> id;
+        cout << "Ingrese el ID: "; // Para que sea mas claro que se ingresa el ID. (Benjamin)
+        // cin >> id; // Desmarque mientras veia si funcionaba el leerEnteroSeguro. (Benjamin).
+        id = leerEnteroSeguro("> ", 0, 1000);
         cin.ignore();
         cout << "Enunciado: ";
         getline(cin, enunciado);
-        cout << "Nivel Bloom (0-5): ";
-        cin >> nivel;
+        cout << "Nivel Bloom (0-5): \n> 0. Recordar\n> 1. Entender\n> 2. Aplicar\n> 3. Analizar\n> 4. Evaluar\n> 5. Crear\n "; // Para mas claridad sobre los niveles. (Benjamin)
+        // cin >> nivel; // Desmarque mientras veia si funcionaba el leerEnteroSeguro. (Benjamin).}
+        nivel = leerEnteroSeguro("> ", 0, 5);
         cout << "Tiempo estimado (min): ";
-        cin >> tiempoEstimado;
+        // cin >> tiempoEstimado; // Desmarque mientras veia si funcionaba el leerEnteroSeguro. (Benjamin).
+        tiempoEstimado = leerEnteroSeguro("> ", 0, 100);
         cin.ignore();
-        cout << "Año de uso: ";
-        cin >> anioUso;
+        cout << "Año de uso (1900 - 2030): ";
+        //cin >> anioUso;
+        anioUso = leerEnteroSeguro("> ", 1900, 2030);
         cin.ignore();
 
         int valor;
         cout << "¿Es Verdadero (1) o Falso (0)? ";
-        cin >> valor;
+        //cin >> valor;
+        valor = leerEnteroSeguro("> ", 0, 1);
         cin.ignore();
         esVerdadero = (valor == 1);
         respuestaCorrecta = esVerdadero ? "Verdadero" : "Falso";
@@ -279,20 +309,24 @@ public:
 
     void crearDesdeConsola() override
     {
-        cout << "ID: ";
-        cin >> id;
+        cout << "Ingrese el ID: ";
+        // cin >> id; // Desmarque mientras veia si funcionaba el leerEnteroSeguro. (Benjamin).
+        id = leerEnteroSeguro("> ", 0, 1000);
         cin.ignore();
         cout << "Enunciado: ";
         getline(cin, enunciado);
-        cout << "Nivel Bloom (0-5): ";
-        cin >> nivel;
+        cout << "Nivel Bloom (0-5): \n> 0. Recordar\n> 1. Entender\n> 2. Aplicar\n> 3. Analizar\n> 4. Evaluar\n> 5. Crear\n "; // Para mas claridad sobre los niveles. (Benjamin)
+        // cin >> nivel; // Desmarque mientras veia si funcionaba el leerEnteroSeguro. (Benjamin).
+        nivel = leerEnteroSeguro("> ", 0, 5);
         cout << "Tiempo estimado (min): ";
-        cin >> tiempoEstimado;
+        // cin >> tiempoEstimado;
+        tiempoEstimado = leerEnteroSeguro("> ", 0, 100);
         cin.ignore();
         cout << "Respuesta esperada: ";
         getline(cin, respuestaCorrecta);
-        cout << "Año de uso: ";
-        cin >> anioUso;
+        cout << "Año de uso (1900 - 2030): ";
+        // cin >> anioUso; // Desmarque mientras veia si funcionaba el leerEnteroSeguro. (Benjamin).
+        anioUso = leerEnteroSeguro("> ", 1900, 2030);
         cin.ignore();
         cout << "Contexto del ensayo: ";
         getline(cin, contexto);
@@ -363,20 +397,23 @@ public:
 
     void crearDesdeConsola() override
     {
-        cout << "ID: ";
+        cout << "Ingrese el ID: ";
         cin >> id;
         cin.ignore();
         cout << "Enunciado: ";
         getline(cin, enunciado);
-        cout << "Nivel Bloom (0-5): ";
-        cin >> nivel;
+        cout << "Nivel Bloom (0-5): \n> 0. Recordar\n> 1. Entender\n> 2. Aplicar\n> 3. Analizar\n> 4. Evaluar\n> 5. Crear\n "; // Para mas claridad sobre los niveles. (Benjamin)
+        // cin >> nivel; // Desmarque mientras veia si funcionaba el leerEnteroSeguro. (Benjamin).
+        nivel = leerEnteroSeguro("> ", 0, 5);
         cout << "Tiempo estimado (min): ";
-        cin >> tiempoEstimado;
+        // cin >> tiempoEstimado; // Desmarque mientras veia si funcionaba el leerEnteroSeguro. (Benjamin).
+        tiempoEstimado = leerEnteroSeguro("> ", 0, 100);
         cin.ignore();
         cout << "Respuesta Correcta: ";
         getline(cin, respuestaCorrecta);
-        cout << "Año de uso: ";
-        cin >> anioUso;
+        cout << "Año de uso (1900 - 2030): ";
+        // cin >> anioUso; // Desmarque mientras veia si funcionaba el leerEnteroSeguro. (Benjamin).
+        anioUso = leerEnteroSeguro("> ", 1900, 2030);
         cin.ignore();
         cout << "Tipo de dato esperado (ej: palabra, número, fecha): ";
         getline(cin, tipoEsperado);
@@ -434,20 +471,24 @@ public:
 
     void crearDesdeConsola() override
     {
-        cout << "ID: ";
-        cin >> id;
+        cout << "Ingrese el ID: ";
+        // cin >> id;
+        id = leerEnteroSeguro("> ", 0, 1000);
         cin.ignore();
         cout << "Enunciado: ";
         getline(cin, enunciado);
-        cout << "Nivel Bloom (0-5): ";
-        cin >> nivel;
+        cout << "Nivel Bloom (0-5): \n> 0. Recordar\n> 1. Entender\n> 2. Aplicar\n> 3. Analizar\n> 4. Evaluar\n> 5. Crear\n "; // Para mas claridad sobre los niveles. (Benjamin)
+        // cin >> nivel;
+        nivel = leerEnteroSeguro("> ", 0, 5);
         cout << "Tiempo estimado (min): ";
-        cin >> tiempoEstimado;
+        // cin >> tiempoEstimado;
+        tiempoEstimado = leerEnteroSeguro("> ", 0, 100);
         cin.ignore();
         cout << "Respuesta Correcta: ";
         getline(cin, respuestaCorrecta);
-        cout << "Año de uso: ";
-        cin >> anioUso;
+        cout << "Año de uso (1900 - 2030): ";
+        // cin >> anioUso;
+        anioUso = leerEnteroSeguro("> ", 1900, 2030);
         cin.ignore();
         cout << "Texto plantilla con espacio a completar (use ___ o ...): ";
         getline(cin, plantilla);
@@ -534,21 +575,26 @@ class PreguntaEmparejamiento : public PreguntaBase
 
     void crearDesdeConsola() override
     {
-        cout << "ID: ";
-        cin >> id;
+        cout << "Ingrese el ID: ";
+        // cin >> id;
+        id = leerEnteroSeguro("> ", 0, 1000);
         cin.ignore();
         cout << "Enunciado: ";
         getline(cin, enunciado);
-        cout << "Nivel Bloom (0-5): ";
-        cin >> nivel;
+        cout << "Nivel Bloom (0-5): \n> 0. Recordar\n> 1. Entender\n> 2. Aplicar\n> 3. Analizar\n> 4. Evaluar\n> 5. Crear\n "; // Para mas claridad sobre los niveles. (Benjamin)
+        // cin >> nivel;
+        nivel = leerEnteroSeguro("> ", 0, 5);
         cout << "Tiempo estimado (min): ";
-        cin >> tiempoEstimado;
+        // cin >> tiempoEstimado;
+        tiempoEstimado = leerEnteroSeguro("> ", 0, 100);
         cin.ignore();
-        cout << "Año de uso: ";
-        cin >> anioUso;
+        cout << "Año de uso (1900 - 2030): ";
+        // cin >> anioUso;
+        anioUso = leerEnteroSeguro("> ", 1900, 2030);
         cin.ignore();
         cout << "Cantidad de pares (máximo 10): ";
-        cin >> cantidadPares;
+        // cin >> cantidadPares;
+        cantidadPares = leerEnteroSeguro("> ", 0, 10);
         cin.ignore();
 
         for (int i = 0; i < cantidadPares; ++i)
@@ -696,18 +742,22 @@ public:
 
     void crearDesdeConsola() override
     {
-        cout << "ID: ";
-        cin >> id;
+        cout << "Ingrese el ID: ";
+        // cin >> id;
+        id = leerEnteroSeguro("> ", 0, 1000);
         cin.ignore();
         cout << "Enunciado: ";
         getline(cin, enunciado);
-        cout << "Nivel Bloom (0-5): ";
-        cin >> nivel;
+        cout << "Nivel Bloom (0-5): \n> 0. Recordar\n> 1. Entender\n> 2. Aplicar\n> 3. Analizar\n> 4. Evaluar\n> 5. Crear\n "; // Para mas claridad sobre los niveles. (Benjamin)
+        // cin >> nivel;
+        nivel = leerEnteroSeguro("> ", 0, 5);
         cout << "Tiempo estimado (min): ";
-        cin >> tiempoEstimado;
+        // cin >> tiempoEstimado;
+        tiempoEstimado = leerEnteroSeguro("> ", 0, 100);
         cin.ignore();
-        cout << "Año de uso: ";
-        cin >> anioUso;
+        cout << "Año de uso (1900 - 2030): ";
+        //cin >> anioUso;
+        anioUso = leerEnteroSeguro("> ", 1900, 2030);
         cin.ignore();
 
         cout << "Primer par de referencia (A : B)\n";
@@ -795,18 +845,22 @@ public:
 
     void crearDesdeConsola() override
     {
-        cout << "ID: ";
-        cin >> id;
+        cout << "Ingrese el ID: ";
+        // cin >> id;
+        id = leerEnteroSeguro("> ", 0, 1000);
         cin.ignore();
         cout << "Enunciado: ";
         getline(cin, enunciado);
-        cout << "Nivel Bloom (0-5): ";
-        cin >> nivel;
+        cout << "Nivel Bloom (0-5): \n> 0. Recordar\n> 1. Entender\n> 2. Aplicar\n> 3. Analizar\n> 4. Evaluar\n> 5. Crear\n "; // Para mas claridad sobre los niveles. (Benjamin)
+        // cin >> nivel;
+        nivel = leerEnteroSeguro("> ", 0, 5);
         cout << "Tiempo estimado (min): ";
-        cin >> tiempoEstimado;
+        // cin >> tiempoEstimado;
+        tiempoEstimado = leerEnteroSeguro("> ", 0, 100);
         cin.ignore();
-        cout << "Año de uso: ";
-        cin >> anioUso;
+        cout << "Año de uso (1900 - 2030): ";
+        // cin >> anioUso;
+        anioUso = leerEnteroSeguro("> ", 1900, 2030);
         cin.ignore();
 
         cout << "Tipo de gráfico (barras, circular, línea, etc.): ";
@@ -861,8 +915,6 @@ public:
     }
 };
 
-// Helper function to dynamically create a PreguntaBase by type
-// Helper function to dynamically create a PreguntaBase by type
 PreguntaBase *crearPreguntaDesdeTipo(const string &tipoStr)
 {
     if (tipoStr == "Opcion Multiple")
@@ -966,7 +1018,7 @@ public:
             return;
         }
 
-        cout << "Tipo de pregunta:\n"
+        cout << "\nTipo de pregunta:\n"
              << "1. Opcion Multiple\n"
              << "2. Verdadero/Falso\n"
              << "3. Ensayo\n"
@@ -976,7 +1028,8 @@ public:
              << "7. Analogías\n"
              << "8. Grafico\n> ";
         int tipo;
-        cin >> tipo;
+        //cin >> tipo; // Lo desmarque mientras veia si funcionaba el leerEnteroSeguro. (Benjamin).
+        tipo = leerEnteroSeguro("> ", 1, 8);
         cin.ignore();
 
         PreguntaBase *p = nullptr;
@@ -1033,7 +1086,7 @@ public:
 
         banco[cantidad++] = p;
         guardar();
-        cout << "Pregunta creada correctamente.\n";
+        cout << "\nPregunta creada correctamente.\n\n";
     }
 
     void listar()
@@ -1091,16 +1144,19 @@ void generarEvaluacion(GestorPreguntas &gestor)
     cin.ignore();
     getline(cin, eval.asignatura);
     cout << "Año de la evaluación: ";
-    cin >> eval.anio;
+    // cin >> eval.anio;
+    eval.anio = leerEnteroSeguro("> ", 1900, 2030);
     cout << "Cantidad de preguntas a incluir: ";
     int num;
-    cin >> num;
+    // cin >> num;
+    num = leerEnteroSeguro("> ", 0, 100);
 
     for (int i = 0; i < num; ++i)
     {
-        cout << "Nivel Bloom de la pregunta " << (i + 1) << " (0-5): ";
+        cout << "Nivel Bloom de la pregunta " << (i + 1) << " (0-5)\n> 0. Recordar\n> 1. Entender\n> 2. Aplicar\n> 3. Analizar\n> 4. Evaluar\n> 5. Crear\n> "; // Para mas claridad sobre los niveles. (Benjamin)"
         int nivelInt;
-        cin >> nivelInt;
+        // cin >> nivelInt;
+        nivelInt = leerEnteroSeguro("> ", 0, 5);
 
         for (int j = 0; j < gestor.getCantidad(); ++j)
         {
@@ -1119,10 +1175,12 @@ int main()
 {
     GestorPreguntas gestor;
     int opcion;
+    cout << "\n\n- Bienvenido al sistema de gestión de preguntas." << endl; // Mensaje de bienvenida. (Benjamin)
     do
     {
-        cout << "\n1. Crear pregunta\n2. Listar preguntas\n3. Buscar por nivel\n4. Editar pregunta\n5. Eliminar pregunta\n6. Generar evaluación\n0. Salir\n> ";
-        cin >> opcion;
+        cout << "\n- Ingrese una opcion:\n1. Crear pregunta\n2. Listar preguntas\n3. Buscar por nivel\n4. Editar pregunta\n5. Eliminar pregunta\n6. Generar evaluación\n0. Salir\n> "; // Ajuste un poco el texto para que sea más claro. (Benjamin).
+        //cin >> opcion; // Lo desmarque mientras veia si funcionaba el leerEnteroSeguro. (Benjamin).
+        opcion = leerEnteroSeguro("> ", 0, 6);
         switch (opcion)
         {
         case 1:
@@ -1166,14 +1224,14 @@ int main()
             }
             cout << "Nuevo enunciado: ";
             getline(cin, p->enunciado);
-            cout << "Nivel Bloom (0-5): ";
+            cout << "Nivel Bloom (0-5): \n> 0. Recordar\n> 1. Entender\n> 2. Aplicar\n> 3. Analizar\n> 4. Evaluar\n> 5. Crear\n "; // Para mas claridad sobre los niveles. (Benjamin)
             cin >> p->nivel;
             cout << "Tiempo estimado (min): ";
             cin >> p->tiempoEstimado;
             cin.ignore();
             cout << "Respuesta Correcta: ";
             getline(cin, p->respuestaCorrecta);
-            cout << "Año de uso: ";
+            cout << "Año de uso (1900 - 2030): ";
             cin >> p->anioUso;
             gestor.guardar();
             cout << "Pregunta actualizada.\n";
@@ -1202,6 +1260,6 @@ int main()
             generarEvaluacion(gestor);
             break;
         }
-    } while (opcion != 0);
+    } while (opcion != 0); cout << "\n- Se ha finalizado el programa." << endl; // Agregue un mensaje para dejar claridad que se cerró el programa. (Benjamin)
     return 0;
 }
